@@ -5,7 +5,12 @@
 
 from django.conf import settings
 from django.core.management.commands import migrate
+from django.test import SimpleTestCase
 from django.test.runner import dependency_ordered, DiscoverRunner
+
+class MigrateTestCase(SimpleTestCase):
+    def test(self):
+        pass
 
 
 class TestMigrationExecutor(migrate.MigrationExecutor):
@@ -27,7 +32,7 @@ class TestMigrateCommand(migrate.Command):
         
         test_func_name = 'test_%s' % action
         
-        test_func = getattr(migration, test_func_name)
+        test_func = getattr(migration, test_func_name, None)
         
         if not test_func:
             return
@@ -37,12 +42,15 @@ class TestMigrateCommand(migrate.Command):
         
         project_state = executor.loader.project_state((migration.app_label, migration.name), at_end=False)
         
-        test_func(project_state)
+        test_func(project_state, self.testcase)
         
         if self.verbosity > 0:
             self.stdout.write(' OK', self.style.MIGRATE_SUCCESS)
     
     def handle(self, *args, **kwargs):
+        
+        self.testcase = MigrateTestCase('test')
+        
         old = migrate.MigrationExecutor
         migrate.MigrationExecutor = TestMigrationExecutor
         
