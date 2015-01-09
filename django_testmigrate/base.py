@@ -67,7 +67,7 @@ class TestMigrationRunner(DiscoverRunner):
 # the following code mostly copy+pasted from Django, used under a BSD license.
 
 
-def create_test_db(self, verbosity=1, autoclobber=False, serialize=True):
+def create_test_db(self, verbosity=1, autoclobber=False, serialize=True, db_name_suffix=None):
     """
     Creates a test database, prompting the user for confirmation if the
     database already exists. Returns the name of the test database created.
@@ -76,6 +76,9 @@ def create_test_db(self, verbosity=1, autoclobber=False, serialize=True):
     from django.core.management import call_command
 
     test_database_name = self._get_test_db_name()
+    
+    if db_name_suffix:
+        test_database_name += db_name_suffix
 
     if verbosity >= 1:
         test_db_repr = ''
@@ -160,6 +163,7 @@ def setup_databases(verbosity, interactive, **kwargs):
                     verbosity,
                     autoclobber=not interactive,
                     serialize=connection.settings_dict.get("TEST", {}).get("SERIALIZE", True),
+                    db_name_suffix=kwargs.get('db_name_suffix'),
                 )
                 destroy = True
             else:
