@@ -31,3 +31,12 @@ class Migration(migrations.Migration):
     
     def test_apply_start(self, apps, testcase):
         testcase.assertFalse(True)
+    
+    def test_apply_success(self, apps, testcase):
+        testcase.assertTrue(True)
+    
+    def test_unapply_start(self, apps, testcase):
+        testcase.assertTrue(True)
+    
+    def test_unapply_success(self, apps, testcase):
+        testcase.assertTrue(True)

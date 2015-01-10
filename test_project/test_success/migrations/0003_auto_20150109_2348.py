@@ -7,19 +7,19 @@ from django.db import models, migrations
 def populate_data(apps, schema_editor):
     MyModel = apps.get_model("test_success", "MyModel")
     
-    MyModel.objects.update(text='foo')
+    MyModel.objects.update(text='bar')
 
 
 def populate_data_rev(apps, schema_editor):
     MyModel = apps.get_model("test_success", "MyModel")
     
-    MyModel.objects.update(text='')
+    MyModel.objects.update(text='foo')
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('test_success', '0001_initial'),
+        ('test_success', '0002_auto_20150109_1754'),
     ]
 
     operations = [
@@ -28,15 +28,3 @@ class Migration(migrations.Migration):
             populate_data_rev,
         ),
     ]
-    
-    def test_apply_start(self, apps, testcase):
-        testcase.assertTrue(True)
-    
-    def test_apply_success(self, apps, testcase):
-        testcase.assertTrue(True)
-    
-    def test_unapply_start(self, apps, testcase):
-        testcase.assertTrue(True)
-    
-    def test_unapply_success(self, apps, testcase):
-        testcase.assertTrue(True)

@@ -2,7 +2,7 @@ from optparse import make_option
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django.db import connections, DEFAULT_DB_ALIAS
+from django.db import connections, DEFAULT_DB_ALIAS, migrations
 
 from ...base import TestMigrationRunner, TestMigrateCommand, TestMigrationExecutor
 
@@ -47,15 +47,19 @@ class Command(BaseCommand):
                 root_nodes = executor.loader.graph.root_nodes()
                 
                 for app_name, migration_name in root_nodes:
-                    TestMigrateCommand().execute(
-                        app_name,
-                        migration_name,
-                        verbosity=self.verbosity,
-                        interactive=False,
-                        database=connection.alias,
-                        test_database=True,
-                        test_flush=True,
-                    )
+                    try:
+                        TestMigrateCommand().execute(
+                            app_name,
+                            migration_name,
+                            verbosity=self.verbosity,
+                            interactive=False,
+                            database=connection.alias,
+                            test_database=True,
+                            test_flush=True,
+                        )
+                    except migrations.Migration.IrreversibleError as e:
+                        if self.verbosity > 0:
+                            self.stdout.write(str(e), self.style.WARNING)
         finally:
             runner.teardown_test_environment()
 
