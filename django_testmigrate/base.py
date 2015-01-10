@@ -10,8 +10,7 @@ from django.test import SimpleTestCase
 from django.test.runner import dependency_ordered, DiscoverRunner
 
 class MigrateTestCase(SimpleTestCase):
-    def test(self):
-        pass
+    test = lambda self: None
 
 
 class TestMigrationExecutor(migrate.MigrationExecutor):
@@ -28,8 +27,8 @@ class TestMigrationExecutor(migrate.MigrationExecutor):
 class TestMigrateCommand(migrate.Command):
     def run_test_func(self, action, migration, executor, test_func, test_func_name):
         if self.verbosity > 0:
-            arrow = '▲' if action.endswith('success') else '▼'
-            self.stdout.write('    %s Running %s for %s...' % (arrow, test_func_name, migration.name,), self.style.MIGRATE_SUCCESS, ending='')
+            whitespace = '' if action.startswith('apply') else '  '
+            self.stdout.write('   %sRunning %s.%s.%s...' % (whitespace, migration.app_label, migration.name, test_func_name,), self.style.MIGRATE_SUCCESS, ending='')
         
         project_state = executor.loader.project_state((migration.app_label, migration.name), at_end=False)
         

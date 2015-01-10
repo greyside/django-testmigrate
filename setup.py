@@ -8,7 +8,7 @@ package_name = 'django_testmigrate'
 
 setup(name='django-testmigrate',
     version=django_testmigrate.__version__,
-    description="Runs some quick tests on your admin site objects to make sure there aren't non-existant fields listed, etc.",
+    description="Lets you write test functions for your migrations.",
     author='Seán Hayes',
     author_email='sean@seanhayes.name',
     classifiers=[
@@ -21,8 +21,8 @@ setup(name='django-testmigrate',
         "Topic :: Software Development :: Libraries :: Python Modules"
     ],
     keywords='django testmigrate migrations',
-    url='https://github.com/SeanHayes/django-testmigrate',
-    download_url='https://github.com/SeanHayes/django-testmigrate',
+    url='https://github.com/greyside/django-testmigrate',
+    download_url='https://github.com/greyside/django-testmigrate',
     license='BSD',
     install_requires=[
         'django>=1.7',

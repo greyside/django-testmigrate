@@ -62,7 +62,7 @@ class Command(BaseCommand):
                         )
                     except migrations.Migration.IrreversibleError as e:
                         if self.verbosity > 0:
-                            self.stdout.write('\n    ▲ '+str(e), self.style.WARNING)
+                            self.stdout.write('\n  Warning in %s.%s: %s' % (app_name, migration_name, e), self.style.WARNING)
         finally:
             runner.teardown_test_environment()
 

@@ -5,11 +5,12 @@ import subprocess
 
 
 class MigrationTestCase(TestCase):
-    executable = 'coverage run -a --source=django_testmigrate --source=test_project/test_success/migrations --source=test_project/test_failure/migrations'
+    executable = 'coverage run -a --source=django_testmigrate,test_project/test_success/migrations,test_project/test_failure/migrations'
+    cmd = executable+" manage.py testmigrate -v 2 --settings=test_project.%s_settings"
     
     def test_success_reverse_migrations_complete(self):
         process = subprocess.Popen(
-            self.executable+" manage.py testmigrate --settings=test_project.success_settings",
+            self.cmd % 'success',
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
@@ -17,7 +18,7 @@ class MigrationTestCase(TestCase):
         
         stdout, stderr = process.communicate()
         
-        print(stdout, stderr)
+        print('\n', stdout, stderr)
         
         self.assertEqual(process.returncode, 0)
         self.assertNotEqual(stdout, b'')
@@ -25,7 +26,7 @@ class MigrationTestCase(TestCase):
     
     def test_success_reverse_migrations_halted(self):
         process = subprocess.Popen(
-            self.executable+" manage.py testmigrate --settings=test_project.success_reverse_halted_settings",
+            self.cmd % 'success_reverse_halted',
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
@@ -33,7 +34,7 @@ class MigrationTestCase(TestCase):
         
         stdout, stderr = process.communicate()
         
-        print(stdout, stderr)
+        print('\n', stdout, stderr)
         
         self.assertEqual(process.returncode, 0)
         self.assertNotEqual(stdout, b'')
@@ -41,7 +42,7 @@ class MigrationTestCase(TestCase):
     
     def test_failure(self):
         process = subprocess.Popen(
-            self.executable+" manage.py testmigrate --settings=test_project.failure_settings",
+            self.cmd % 'failure',
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
