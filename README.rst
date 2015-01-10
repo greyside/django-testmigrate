@@ -9,16 +9,38 @@ django-testmigrate
 
 Run automated tests for your migrations.
 
+-------
+Install
+-------
+
+::
+
+    pip install django-testmigrate
+
+Add "django_testmigrate" to your INSTALLED_APPS.
+
 --------------
-Add Tests to Your Migrations
+Run Your Tests
 --------------
 
-Four optional test method can be added to your migration classes:
+This command creates and then destroys a test database just like the Django test runner does. Migrations are run all the way forward and then as far backwards as possible.
+
+::
+
+    ./manage.py testmigrate
+
+----------------------------
+Add Tests to Your Migrations
+----------------------------
+
+Four optional test methods can be added to your migration classes:
 
 * test_apply_start - Run before this migration.
 * test_apply_success - Run after this migration.
 * test_unapply_start - Run before this migration is reversed.
 * test_unapply_success - Run after this migration is reversed.
+
+They will not be run during the normal migration command, only during "testmigrate". This makes it possible to create models in your test database that you can write assertions against. 
 
 ::
 
@@ -56,14 +78,4 @@ Four optional test method can be added to your migration classes:
         
         def test_unapply_success(self, apps, testcase):
             pass
-
---------------
-Run Your Tests
---------------
-
-::
-
-    ./manage.py testmigrate
-
-
 
