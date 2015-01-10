@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from optparse import make_option
 
 from django.conf import settings
@@ -59,7 +62,7 @@ class Command(BaseCommand):
                         )
                     except migrations.Migration.IrreversibleError as e:
                         if self.verbosity > 0:
-                            self.stdout.write(str(e), self.style.WARNING)
+                            self.stdout.write('\n    ▲ '+str(e), self.style.WARNING)
         finally:
             runner.teardown_test_environment()
 

@@ -2,6 +2,7 @@
 # Copyright (C) 2015 via680
 #
 # Licensed under a BSD 3-Clause License. See LICENSE file.
+from __future__ import unicode_literals
 
 from django.conf import settings
 from django.core.management.commands import migrate
@@ -25,20 +26,10 @@ class TestMigrationExecutor(migrate.MigrationExecutor):
 
 
 class TestMigrateCommand(migrate.Command):
-    def migration_progress_callback(self, action, migration, *args, **kwargs):
-        executor = kwargs.pop('executor')
-        
-        super(TestMigrateCommand, self).migration_progress_callback(action, migration, *args, **kwargs)
-        
-        test_func_name = 'test_%s' % action
-        
-        test_func = getattr(migration, test_func_name, None)
-        
-        if not test_func:
-            return
-        
+    def run_test_func(self, action, migration, executor, test_func, test_func_name):
         if self.verbosity > 0:
-            self.stdout.write('Running %s for %s...' % (test_func_name, migration.name,), self.style.MIGRATE_SUCCESS, ending='')
+            arrow = '▲' if action.endswith('success') else '▼'
+            self.stdout.write('    %s Running %s for %s...' % (arrow, test_func_name, migration.name,), self.style.MIGRATE_SUCCESS, ending='')
         
         project_state = executor.loader.project_state((migration.app_label, migration.name), at_end=False)
         
@@ -46,6 +37,22 @@ class TestMigrateCommand(migrate.Command):
         
         if self.verbosity > 0:
             self.stdout.write(' OK', self.style.MIGRATE_SUCCESS)
+        
+    
+    def migration_progress_callback(self, action, migration, *args, **kwargs):
+        executor = kwargs.pop('executor')
+        
+        test_func_name = 'test_%s' % action
+        
+        test_func = getattr(migration, test_func_name, None)
+        
+        if test_func and action.endswith('start'):
+            self.run_test_func(action, migration, executor, test_func, test_func_name)
+        
+        super(TestMigrateCommand, self).migration_progress_callback(action, migration, *args, **kwargs)
+        
+        if test_func and action.endswith('success'):
+            self.run_test_func(action, migration, executor, test_func, test_func_name)
     
     def handle(self, *args, **kwargs):
         
