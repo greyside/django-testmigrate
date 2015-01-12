@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from setuptools import setup
+from setuptools import setup, find_packages
 import django_testmigrate
 
-package_name = 'django_testmigrate'
+EXCLUDE_FROM_PACKAGES = ['test_project*']
 
 setup(name='django-testmigrate',
     version=django_testmigrate.__version__,
@@ -28,10 +28,7 @@ setup(name='django-testmigrate',
         'django>=1.7',
         'six',
     ],
-    packages=[
-        package_name,
-        '%s.management.commands' % package_name,
-    ],
+    packages=find_packages(exclude=EXCLUDE_FROM_PACKAGES),
     include_package_data=True,
     zip_safe=False,
     test_suite='tests',
