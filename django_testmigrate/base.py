@@ -32,7 +32,7 @@ class TestMigrateCommand(migrate.Command):
         
         project_state = executor.loader.project_state((migration.app_label, migration.name), at_end=False)
         
-        test_func(project_state, self.testcase)
+        test_func(project_state.render(), self.testcase)
         
         if self.verbosity > 0:
             self.stdout.write(' OK', self.style.MIGRATE_SUCCESS)

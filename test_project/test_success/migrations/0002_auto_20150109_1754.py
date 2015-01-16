@@ -30,6 +30,8 @@ class Migration(migrations.Migration):
     ]
     
     def test_apply_start(self, apps, testcase):
+        MyModel = apps.get_model("test_success", "MyModel")
+        
         testcase.assertTrue(True)
     
     def test_apply_success(self, apps, testcase):
