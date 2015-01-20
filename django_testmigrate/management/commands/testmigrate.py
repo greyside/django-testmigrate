@@ -34,12 +34,6 @@ class Command(BaseCommand):
         # this will do our forwards migrations
         try:
             old_config = runner.setup_databases(db_name_suffix=self.db_name_suffix)
-        except:
-            raise
-        else:
-            # this doesn't go in the finally block since we might want to inspect
-            # the DB after a failure.
-            runner.teardown_databases(old_config)
             
             # unless the user asked us not to, migrate backwards.
             if not self.no_reverse:
@@ -63,6 +57,12 @@ class Command(BaseCommand):
                     except migrations.Migration.IrreversibleError as e:
                         if self.verbosity > 0:
                             self.stdout.write('\n  Warning in %s.%s: %s' % (app_name, migration_name, e), self.style.WARNING)
+        except:
+            raise
+        else:
+            # this doesn't go in the finally block since we might want to inspect
+            # the DB after a failure.
+            runner.teardown_databases(old_config)
         finally:
             runner.teardown_test_environment()
 

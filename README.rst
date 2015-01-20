@@ -79,3 +79,5 @@ They will not be run during the normal migration command, only during "testmigra
         def test_unapply_success(self, apps, testcase):
             pass
 
+Please note, `apps.get_model()` will likely not work in 0001 migrations, since the app hasn't been registered yet. If you need to create data, put it in `test_apply_start()` for that app's 0002 migration.
+
