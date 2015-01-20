@@ -6,8 +6,9 @@ from optparse import make_option
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connections, DEFAULT_DB_ALIAS, migrations
+from django.test.runner import DiscoverRunner
 
-from ...base import TestMigrationRunner, TestMigrateCommand, TestMigrationExecutor
+from ...base import TestMigrateCommand, TestMigrationExecutor
 
 
 class Command(BaseCommand):
@@ -28,7 +29,14 @@ class Command(BaseCommand):
         self.no_reverse = options.get('no_reverse')
         self.db_name_suffix = options.get('db_name_suffix')
         
-        runner = TestMigrationRunner(verbosity=self.verbosity)
+        # need this available later
+        Command.verbosity = self.verbosity
+        
+        from django.core.management.commands import migrate
+        old_Command = migrate.Command
+        migrate.Command = TestMigrateCommand
+        
+        runner = DiscoverRunner(verbosity=self.verbosity)
         runner.setup_test_environment()
         
         # this will do our forwards migrations
@@ -43,11 +51,11 @@ class Command(BaseCommand):
                 executor = TestMigrationExecutor(connection)
                 root_nodes = executor.loader.graph.root_nodes()
                 
-                for app_name, migration_name in root_nodes:
+                for app_label, migration_name in root_nodes:
                     try:
                         TestMigrateCommand().execute(
-                            app_name,
-                            migration_name,
+                            app_label=app_label,
+                            migration_name=migration_name,
                             verbosity=self.verbosity,
                             interactive=False,
                             database=connection.alias,
@@ -56,7 +64,7 @@ class Command(BaseCommand):
                         )
                     except migrations.Migration.IrreversibleError as e:
                         if self.verbosity > 0:
-                            self.stdout.write('\n  Warning in %s.%s: %s' % (app_name, migration_name, e), self.style.WARNING)
+                            self.stdout.write('\n  Warning in %s.%s: %s' % (app_label, migration_name, e), self.style.WARNING)
         except:
             raise
         else:
@@ -64,5 +72,6 @@ class Command(BaseCommand):
             # the DB after a failure.
             runner.teardown_databases(old_config)
         finally:
+            migrate.Command = old_Command
             runner.teardown_test_environment()
 

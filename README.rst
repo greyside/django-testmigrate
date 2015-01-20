@@ -42,7 +42,7 @@ Four optional test methods can be added to your migration classes:
 
 They will not be run during the normal migration command, only during "testmigrate". This makes it possible to create models in your test database that you can write assertions against. 
 
-::
+.. code:: python
 
     class Migration(migrations.Migration):
 
