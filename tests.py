@@ -47,6 +47,10 @@ class MigrationTestCase(TestCase):
         self.assertEqual(stderr, b'')
     
     def test_failure(self):
+        """
+        The failure occurs while migrating backwards, so if we detect an error
+        we'll know backwards migrations ran.
+        """
         process = subprocess.Popen(
             self.cmd % 'failure',
             shell=True,
@@ -61,6 +65,25 @@ class MigrationTestCase(TestCase):
         self.assertEqual(process.returncode, 1)
         self.assertNotEqual(stdout, b'')
         self.assertNotEqual(stderr, b'')
+    
+    def test_success_no_backwards_migrations(self):
+        """
+        If we don't migrate backwards, we won't reach the assertion failure.
+        """
+        process = subprocess.Popen(
+            (self.cmd+' --no-reverse') % 'failure',
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        
+        stdout, stderr = process.communicate()
+        
+        print(stdout, stderr)
+        
+        self.assertEqual(process.returncode, 0)
+        self.assertNotEqual(stdout, b'')
+        self.assertEqual(stderr, b'')
 
 
 class MigrateTestCaseTestCase(TestCase):

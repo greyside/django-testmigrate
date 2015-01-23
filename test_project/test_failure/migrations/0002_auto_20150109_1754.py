@@ -11,8 +11,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(lambda apps, schema_editor: None),
+        migrations.RunPython(lambda apps, schema_editor: None, lambda apps, schema_editor: None),
     ]
     
-    def test_apply_start(self, apps, testcase):
+    def test_unapply_success(self, apps, testcase):
         testcase.assertFalse(True)
