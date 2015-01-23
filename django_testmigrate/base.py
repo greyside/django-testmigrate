@@ -43,9 +43,6 @@ class MigrateTestCase(SimpleTestCase):
     def __getattr__(self, name):
         e = None
         
-        if not self._store:
-            raise AttributeError("'%s' object has no attribute '%s'" % (self.__class__.__name__, name))
-        
         for state, scope in reversed(list(self._store.items())):
             try:
                 val = getattr(scope, name)

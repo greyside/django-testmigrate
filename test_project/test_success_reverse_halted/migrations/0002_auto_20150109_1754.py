@@ -30,6 +30,3 @@ class Migration(migrations.Migration):
     
     def test_unapply_start(self, apps, testcase):
         testcase.assertTrue(True)
-    
-    def test_unapply_success(self, apps, testcase):
-        testcase.assertTrue(True)
