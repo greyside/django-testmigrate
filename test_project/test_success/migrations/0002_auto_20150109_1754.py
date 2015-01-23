@@ -33,6 +33,8 @@ class Migration(migrations.Migration):
         MyModel = apps.get_model("test_success", "MyModel")
         
         testcase.assertTrue(True)
+        
+        testcase.mymodel1 = MyModel.objects.create()
     
     def test_apply_success(self, apps, testcase):
         testcase.assertTrue(True)

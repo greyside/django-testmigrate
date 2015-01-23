@@ -41,6 +41,9 @@ class Command(BaseCommand):
         
         # this will do our forwards migrations
         try:
+            if self.verbosity > 0:
+                self.stdout.write('Running all forwards migrations.', self.style.WARNING)
+            
             old_config = runner.setup_databases(db_name_suffix=self.db_name_suffix)
             
             # unless the user asked us not to, migrate backwards.
@@ -52,8 +55,13 @@ class Command(BaseCommand):
                 root_nodes = executor.loader.graph.root_nodes()
                 
                 for app_label, migration_name in root_nodes:
+                    
+                    if self.verbosity > 0:
+                        self.stdout.write('Running reverse migrations for %s.' % app_label, self.style.WARNING)
                     try:
                         TestMigrateCommand().execute(
+                            app_label,
+                            migration_name,
                             app_label=app_label,
                             migration_name=migration_name,
                             verbosity=self.verbosity,

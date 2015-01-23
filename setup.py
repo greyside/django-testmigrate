@@ -28,6 +28,10 @@ setup(name='django-testmigrate',
         'django>=1.7',
         'six',
     ],
+    tests_require=[
+        'coverage',
+        'mock'
+    ],
     packages=find_packages(exclude=EXCLUDE_FROM_PACKAGES),
     include_package_data=True,
     zip_safe=False,
