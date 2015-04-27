@@ -25,7 +25,7 @@ setup(name='django-testmigrate',
     download_url='https://github.com/greyside/django-testmigrate',
     license='BSD',
     install_requires=[
-        'django>=1.7',
+        'django>=1.8',
         'six',
     ],
     tests_require=[
