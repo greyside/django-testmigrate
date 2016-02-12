@@ -16,8 +16,6 @@ class StateScope(object):
 
 
 class MigrateTestCase(SimpleTestCase):
-    test = lambda self: None
-
     _current_state = None
 
     def __init__(self, *args, **kwargs):
@@ -25,6 +23,9 @@ class MigrateTestCase(SimpleTestCase):
         self.set_current_state(None)
 
         super(MigrateTestCase, self).__init__(*args, **kwargs)
+
+    def test(self):
+        return
 
     def set_current_state(self, state):
         self._current_state = state
